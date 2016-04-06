@@ -41,7 +41,8 @@ function getEntry(env) {
 	const entry = [];
 
 	if (env === dev) {
-		entry.push("webpack-hot-middleware/client");
+		entry.push("webpack-dev-server/client?http://localhost:8080");
+		entry.push("webpack/hot/only-dev-server");
 	}
 
 	entry.push("./client/index.jsx");

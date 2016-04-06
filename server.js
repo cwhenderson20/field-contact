@@ -1,31 +1,49 @@
 "use strict";
 
 const path = require("path");
-const express = require("express");
 
 // Webpack Requirements
 const webpack = require("webpack");
-const webpackDevMiddleware = require("webpack-dev-middleware");
-const webpackHotMiddleware = require("webpack-hot-middleware");
+const WebpackDevServer = require("webpack-dev-server");
 const webpackConfigBuilder = require("./webpack.config");
 
-const app = new express();
-const port = 3000;
-const config = webpackConfigBuilder(process.env.NODE_ENV);
-const compiler = webpack(config);
+const restify = require("restify");
+const bunyan = require("bunyan");
+const httpProxy = require("http-proxy");
+
+const proxy = httpProxy.createProxyServer();
+const logger = bunyan.createLogger({ name: "Field Contact" });
+const server = restify.createServer({ name: "Field Contact", log: logger });
+
+server.use(restify.queryParser());
+server.use(restify.bodyParser());
+server.use(restify.requestLogger());
 
 if (process.env.NODE_ENV === "development") {
-	app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }));
-	app.use(webpackHotMiddleware(compiler));
+	const config = webpackConfigBuilder(process.env.NODE_ENV);
+
+	new WebpackDevServer(webpack(config), {
+		publicPath: config.output.publicPath,
+		hot: true,
+		historyApiFallback: true,
+		stats: { chunks: false, colors: true }
+	}).listen(8080, "localhost", (err) => {
+		if (err) {
+			return logger.error(err);
+		}
+		logger.info("Webpack dev server listening at 8080");
+	});
+
+	server.get(/.*/, (req, res) =>
+		proxy.web(req, res, { target: "http://localhost:8080" })
+	);
+} else {
+	server.get(/.*/, restify.serveStatic({
+		directory: path.join(__dirname, "/dist"),
+		"default": "index.html"
+	}));
 }
 
-app.get("/", (req, res) => {
-	res.sendFile(path.join(__dirname, "client/index.html"));
-});
-
-app.listen(port, (err) => {
-	if (err) {
-		return console.error(err);
-	}
-	console.info("==> 🌎  Listening on port %s. Open up http://localhost:%s/ in your browser.", port, port);
-});
+server.on("after", restify.auditLogger({ log: logger }));
+server.on("uncaughtException", (req, res, route, err) => res.send(err));
+server.listen(3000, () => server.log.info("Listening at http://localhost:3000"));
