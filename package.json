@@ -2,7 +2,7 @@
   "name": "field-contact",
   "version": "0.0.1",
   "description": "Field contact app for police field work",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "cross-env NODE_ENV=development node server"
@@ -25,6 +25,7 @@
     "react-tag-input": "^2.2.5",
     "redux": "3.3.1",
     "restify": "4.0.4",
+    "restify-jwt": "^0.4.0",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.10.0"
   },

@@ -55,13 +55,13 @@ function Add() {
 							<Input type="text" label="OLN" placeholder="OLN" />
 						</Col>
 						<Col xs={12}><h3>Identifying Information</h3></Col>
-						<Col sm={6}>
+						<Col sm={4}>
 							<Input type="text" label="Height" placeholder="Height" addonAfter="in" />
 						</Col>
-						<Col sm={6}>
+						<Col sm={4}>
 							<Input type="text" label="Weight" placeholder="Weight" addonAfter="lbs" />
 						</Col>
-						<Col sm={6}>
+						<Col sm={4}>
 							<Input type="select" label="Ethnicity">
 								<option value="">Select one</option>
 								<option value="white">White/Caucasian</option>

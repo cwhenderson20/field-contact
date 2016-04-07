@@ -11,6 +11,9 @@ const restify = require("restify");
 const bunyan = require("bunyan");
 const httpProxy = require("http-proxy");
 
+const config = require("./config");
+const namespace = require("./routes/ns");
+
 const proxy = httpProxy.createProxyServer();
 const logger = bunyan.createLogger({ name: "Field Contact" });
 const server = restify.createServer({ name: "Field Contact", log: logger });
@@ -19,11 +22,13 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 server.use(restify.requestLogger());
 
-if (process.env.NODE_ENV === "development") {
-	const config = webpackConfigBuilder(process.env.NODE_ENV);
+namespace(server, "/api", require("./routes")(server));
 
-	new WebpackDevServer(webpack(config), {
-		publicPath: config.output.publicPath,
+if (config.env === "development") {
+	const webpackConfig = webpackConfigBuilder(config.env);
+
+	new WebpackDevServer(webpack(webpackConfig), {
+		publicPath: webpackConfig.output.publicPath,
 		hot: true,
 		historyApiFallback: true,
 		stats: { chunks: false, colors: true }
@@ -34,16 +39,17 @@ if (process.env.NODE_ENV === "development") {
 		logger.info("Webpack dev server listening at 8080");
 	});
 
-	server.get(/.*/, (req, res) =>
+	server.get(/^(?!\/api).*/, (req, res) =>
 		proxy.web(req, res, { target: "http://localhost:8080" })
 	);
 } else {
-	server.get(/.*/, restify.serveStatic({
+	server.get(/^(?!\/api).*/, restify.serveStatic({
 		directory: path.join(__dirname, "/dist"),
 		"default": "index.html"
 	}));
 }
 
 server.on("after", restify.auditLogger({ log: logger }));
-server.on("uncaughtException", (req, res, route, err) => res.send(err));
-server.listen(3000, () => server.log.info("Listening at http://localhost:3000"));
+server.on("uncaughtException", (req, res, route, err) => req.log.error("ERROR") && res.send(err));
+server.listen(config.server_port, () =>
+	server.log.info(`Listening at http://${config.server_host}:${config.server_port}`));
