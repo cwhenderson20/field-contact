@@ -62,7 +62,6 @@ function getLoaders() {
 		loader: "raw"
 	}, {
 		test: /\.css$/,
-		include: path.join(__dirname, "client"),
 		loaders: ["style", "css"]
 	}, {
 		test: /\.woff(\?.*)?$/,

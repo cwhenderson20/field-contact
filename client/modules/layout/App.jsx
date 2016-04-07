@@ -1,22 +1,15 @@
 import React, { PropTypes } from "react";
-
-const styles = {
-	appContainer: {
-		display: "flex",
-		minHeight: "100vh",
-		flexDirection: "column"
-	},
-	contentContainer: {
-		flex: 1
-	}
-};
+import { Grid } from "react-bootstrap";
+import Navigation from "./Navigation";
+import "static/global.css";
 
 function App({ children }) {
 	return (
-		<div style={styles.appContainer}>
-			<div style={styles.contentContainer}>
+		<div>
+			<Navigation />
+			<Grid>
 				{children}
-			</div>
+			</Grid>
 		</div>
 	);
 }
