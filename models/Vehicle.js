@@ -34,6 +34,6 @@ const VehicleSchema = new mongoose.Schema({
 	tags: [{ type: ObjectId, ref: "Tag" }]
 });
 
-VehicleSchema.virtual("ownerInfo.name").get(`${this.ownerInfo.firstName} ${this.ownerInfo.lastName}`);
+// VehicleSchema.virtual("ownerInfo.name").get(`${this.ownerInfo.firstName} ${this.ownerInfo.lastName}`);
 
 mongoose.model("Vehicle", VehicleSchema);
