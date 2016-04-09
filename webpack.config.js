@@ -101,7 +101,7 @@ function getConfig(env) {
 		target: "web",
 		output: {
 			path: path.join(__dirname, "dist"),
-			publicPath: "",
+			publicPath: "/",
 			filename: "bundle.js"
 		},
 		plugins: getPlugins(env),

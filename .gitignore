@@ -36,3 +36,6 @@ dist
 
 # Config files
 .jsbeautifyrc
+
+# Env file
+.devenv

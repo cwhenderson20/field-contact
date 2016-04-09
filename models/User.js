@@ -36,26 +36,17 @@ UserSchema.virtual("name").get(function() {
 
 UserSchema.pre("save", function(next) {
 	const user = this;
-	const User = mongoose.model("User", UserSchema);
 
-	User.findOne({ email: user.email }, (err, existingUser) => {
+	if (!user.isModified("password")) {
+		return next();
+	}
+
+	bcrypt.hash(user.password, 1, (err, hash) => {
 		if (err) {
 			return next(err);
 		}
-
-		if (existingUser) {
-			const existingUserError = new Error("User already exists");
-			existingUserError.code = "UserAlreadyExists";
-			return next(existingUserError);
-		}
-
-		bcrypt.hash(user.password, 1, (err, hash) => {
-			if (err) {
-				return next(err);
-			}
-			user.password = hash;
-			next();
-		});
+		user.password = hash;
+		next();
 	});
 });
 
@@ -74,10 +65,10 @@ function checkPassword(input, cb) {
 
 function generateResetToken(cb) {
 	const user = this;
-	const token = crypto.randomBytes(20).toString("hex");
+	const token = crypto.randomBytes(30).toString("hex");
 
 	user.passwordResetToken = token;
-	user.passwordResetExpires = Date.now() + 1800000;
+	user.passwordResetExpires = Date.now() + 180000;
 
 	user.save((err) => {
 		if (err) {
@@ -93,6 +84,7 @@ function generateJWT() {
 	return jwt.sign({
 		_id: this._id,
 		email: this.email,
+		authData: crypto.createHash("sha256").update(this.password).digest("hex"),
 		exp: exp.unix()
 	}, "SECRET", {
 		jwtid: uuid.v4()
