@@ -4,8 +4,9 @@ import { Router } from "react-router";
 import createBrowserHistory from "history/lib/createBrowserHistory";
 import { useRouterHistory } from "react-router";
 import { syncHistoryWithStore } from "react-router-redux";
-import configureStore from "./store/configureStore";
-import makeRoutes from "./routes";
+
+import configureStore from "../store";
+import makeRoutes from "./Routes";
 
 const browserHistory = useRouterHistory(createBrowserHistory)();
 const store = configureStore({}, browserHistory);
@@ -28,12 +29,12 @@ class Root extends Component {
 		if (__DEBUG__) {
 			if (__DEBUG_NEW_WINDOW__) {
 				if (!window.devToolsExtension) {
-					require("modules/app/utils/createDevToolsWindow").default(store);
+					require("components/devtools/createDevToolsWindow").default(store);
 				} else {
 					window.devToolsExtension.open();
 				}
 			} else if (!window.devToolsExtension) {
-				const DevTools = require("modules/app/utils/DevTools").default;
+				const DevTools = require("components/devtools/DevTools").default;
 				return <DevTools />;
 			}
 		}

@@ -11,7 +11,7 @@ const mongoose = require("mongoose");
 
 const webpackConfigBuilder = require("./webpack.config");
 const config = require("./config");
-const namespace = require("./routes/ns");
+const namespace = require("./routes/namespace");
 
 const proxy = httpProxy.createProxyServer();
 const logger = bunyan.createLogger({ name: "Field Contact" });

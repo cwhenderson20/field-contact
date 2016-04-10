@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 const rootEl = document.getElementById("root");
 
 let render = () => {
-	const Root = require("./modules/app/Root").default;
+	const Root = require("./components/Root").default;
 	ReactDOM.render(
 		<Root />,
 		rootEl
@@ -27,7 +27,7 @@ if (module.hot) {
 			renderError(error)
 		}
 	}
-	module.hot.accept("./modules/app/Root", () => {
+	module.hot.accept("./components/Root", () => {
 		setTimeout(render)
 	});
 }

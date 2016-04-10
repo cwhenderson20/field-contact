@@ -1,22 +1,23 @@
 import { applyMiddleware, compose, createStore } from "redux";
 import { routerMiddleware } from "react-router-redux";
-import rootReducer from "../rootReducer";
+import thunk from "redux-thunk";
+import rootReducer from "../reducer";
 
 export default function configureStore(initialState = {}, history) {
-	let middleware = applyMiddleware(routerMiddleware(history));
+	let middleware = applyMiddleware(thunk, routerMiddleware(history));
 
 	if (__DEBUG__) {
 		const devTools = window.devToolsExtension ?
 			window.devToolsExtension() :
-			require("modules/app/utils/DevTools").default.instrument();
+			require("components/devtools/DevTools").default.instrument();
 		middleware = compose(middleware, devTools);
 	}
 
 	const store = middleware(createStore)(rootReducer, initialState);
 
 	if (module.hot) {
-		module.hot.accept("../rootReducer", () => {
-			const nextRootReducer = require("../rootReducer").default;
+		module.hot.accept("../reducer", () => {
+			const nextRootReducer = require("../reducer").default;
 			store.replaceReducer(nextRootReducer);
 		});
 	}
