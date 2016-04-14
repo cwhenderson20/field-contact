@@ -1,6 +1,8 @@
 language: node_js
 node_js:
-  - "4.2"
-  - "4.3"
-before_install:
-  if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+- '4.2'
+- '4.3'
+before_install: if [[ `npm -v` != 3* ]]; then npm i -g npm@3; fi
+notifications:
+  slack:
+    secure: C4N09DAjSMMtiPSTm8mQvDgAWPARDIK+3HvhM7RK1c9xAZ5utR/p61Bqm9mkn1n9tyOLRw+Tq0ZuDsAnkUQ77d9s8LQsvxmODZVB3uUlF9sFVsioxYn1WycfrQDcfa/zhgD7R9y2U/EWfGwyEAiX1c+w2y0dOq8DtXMl6Xo0Dd9qbAgwfe32Pty0riZBvJMvFUPBeLEHa1z2a2T34Ijw6qB94kNCxavZBby1d5+hlHRUsHG6onYrP7RKtJluAFBEKSIhqPXALq9iOju9jwm3dZgFNceR9HWb0Yl+B9mMzOiiyyhkuVJcUTq3oxbLRKBcfAjwwp8YeR29neByWRo0u2UysVD3iJGMr2kGs1AQQ9zlC+C3SawD0X80qSQRBz1AofFdtpBhUIjCP++zlWxVxoWlIOMAbstKy/5pXb12q+nVf5azrAwQ57E8Ms3s9HXit+EnPick84Th0M/0PuJyEsSsTgww5LFkPzDTdi50srNsVfZBC/EPhLTBbD6SjaTCLLKkuVBmhnBNLATBSWE5YZBM1EiPZsiKANfob8R4MrBZMDJ2WpvDCuxmyqT60XLGzNF3AwPfwKq17vi5IsYzch0779o2Wj/2ZxOaK8Hhv5//3oFM1+EQ5edBwfOnBay1zs9nuiptDSSYdj50Oy+QU3rm8Bn4cSO0qYZj8CRtlUQ=
