@@ -1,19 +1,22 @@
-import React from "react";
+import React, { PropTypes } from "react";
 import { Navbar, Nav, NavItem } from "react-bootstrap";
 
-function Navigation() {
+function Navigation({ logOut }) {
 	return (
 		<Navbar>
 			<Navbar.Header>
 				<Navbar.Brand>
-					<a href="/">Field Contact</a>
+					<a href="/dashboard">Field Contact</a>
 				</Navbar.Brand>
 				<Navbar.Toggle />
 			</Navbar.Header>
 			<Navbar.Collapse>
 				<Nav>
-					<NavItem href="/">Dashboard</NavItem>
+					<NavItem href="/dashboard">Dashboard</NavItem>
 					<NavItem href="/add">Add Entry</NavItem>
+				</Nav>
+				<Nav pullRight>
+					<NavItem onClick={logOut}>Log Out</NavItem>
 				</Nav>
 			</Navbar.Collapse>
 		</Navbar>
@@ -21,6 +24,8 @@ function Navigation() {
 }
 
 Navigation.displayName = "Navigation";
-Navigation.propTypes = {};
+Navigation.propTypes = {
+	logOut: PropTypes.func.isRequired
+};
 
 export default Navigation;

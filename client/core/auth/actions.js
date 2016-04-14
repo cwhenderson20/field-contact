@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from "./action-types";
+import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
 
 function requestLogin(credentials) {
 	return {
@@ -40,4 +40,28 @@ export function loginUser(credentials) {
 				dispatch(loginError(err.data.message));
 			});
 	}
+}
+
+function requestLogout() {
+	return {
+		type: LOGOUT_REQUEST,
+		isFetching: true,
+		isAuthenticated: true
+	};
+}
+
+function receiveLogout() {
+	return {
+		type: LOGOUT_SUCCESS,
+		isFetching: false,
+		isAuthenticated: false
+	};
+}
+
+export function logoutUser() {
+	return (dispatch) => {
+		dispatch(requestLogout());
+		localStorage.removeItem("token");
+		dispatch(receiveLogout());
+	};
 }
