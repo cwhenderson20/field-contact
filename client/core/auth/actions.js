@@ -1,4 +1,5 @@
 import axios from "axios";
+import jwt from "jsonwebtoken";
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
 
 function requestLogin(credentials) {
@@ -10,12 +11,13 @@ function requestLogin(credentials) {
 	};
 }
 
-function receiveLogin(token) {
+function receiveLogin(token, user) {
 	return {
 		type: LOGIN_SUCCESS,
 		isFetching: false,
 		isAuthenticated: true,
-		token
+		token,
+		user
 	};
 }
 
@@ -34,8 +36,10 @@ export function loginUser(credentials) {
 
 		axios.post("/api/login", credentials)
 			.then((res) => {
-				localStorage.setItem("token", res.data.token);
-				dispatch(receiveLogin(res.data.token));
+				const token = res.data.token;
+				const decodedToken = jwt.decode(token);
+				localStorage.setItem("authtoken", token);
+				dispatch(receiveLogin(token, decodedToken._id));
 			}).catch((err) => {
 				dispatch(loginError(err.data.message));
 			});
@@ -61,7 +65,7 @@ function receiveLogout() {
 export function logoutUser() {
 	return (dispatch) => {
 		dispatch(requestLogout());
-		localStorage.removeItem("token");
+		localStorage.removeItem("authtoken");
 		dispatch(receiveLogout());
 	};
 }

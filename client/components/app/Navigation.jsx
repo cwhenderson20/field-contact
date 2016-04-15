@@ -1,19 +1,24 @@
 import React, { PropTypes } from "react";
+import { LinkContainer } from "react-router-bootstrap";
 import { Navbar, Nav, NavItem } from "react-bootstrap";
 
 function Navigation({ logOut }) {
 	return (
 		<Navbar>
 			<Navbar.Header>
-				<Navbar.Brand>
-					<a href="/dashboard">Field Contact</a>
-				</Navbar.Brand>
+				<LinkContainer to="/dashboard">
+					<Navbar.Brand>Field Contact</Navbar.Brand>
+				</LinkContainer>
 				<Navbar.Toggle />
 			</Navbar.Header>
 			<Navbar.Collapse>
 				<Nav>
-					<NavItem href="/dashboard">Dashboard</NavItem>
-					<NavItem href="/add">Add Entry</NavItem>
+					<LinkContainer to="/dashboard">
+						<NavItem>Dashboard</NavItem>
+					</LinkContainer>
+					<LinkContainer to="/add">
+						<NavItem>Add Entry</NavItem>
+					</LinkContainer>
 				</Nav>
 				<Nav pullRight>
 					<NavItem onClick={logOut}>Log Out</NavItem>

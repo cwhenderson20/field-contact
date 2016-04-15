@@ -1,9 +1,30 @@
+import jwt from "jsonwebtoken";
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
 
-const initialState = {
-	isFetching: false,
-	isAuthenticated: localStorage.getItem("token") ? true : false
-};
+function getInitialState() {
+	const initialState = {
+		isFetching: false,
+		isAuthenticated: false
+	};
+
+	const token = localStorage.getItem("authtoken");
+
+	if (token) {
+		const decodedToken = jwt.decode(token);
+
+		if (!decodedToken || decodedToken.exp <= Date.now() / 1000) {
+			return initialState;
+		}
+
+		initialState.isAuthenticated = true;
+		initialState.token = token;
+		initialState.user = decodedToken._id;
+	}
+
+	return initialState;
+}
+
+const initialState = getInitialState();
 
 export function authReducer(state = initialState, action) {
 	switch (action.type) {
@@ -16,7 +37,8 @@ export function authReducer(state = initialState, action) {
 			return Object.assign({}, state, {
 				isFetching: false,
 				isAuthenticated: true,
-				token: action.token
+				token: action.token,
+				user: action.user
 			});
 		case LOGIN_FAILURE:
 			return Object.assign({}, state, {
