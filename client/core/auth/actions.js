@@ -1,48 +1,33 @@
-import axios from "axios";
 import jwt from "jsonwebtoken";
+import { CALL_API } from "redux-api-middleware";
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
-
-function requestLogin(credentials) {
-	return {
-		type: LOGIN_REQUEST,
-		isFetching: true,
-		isAuthenticated: false,
-		credentials
-	};
-}
-
-function receiveLogin(token, user) {
-	return {
-		type: LOGIN_SUCCESS,
-		isFetching: false,
-		isAuthenticated: true,
-		token,
-		user
-	};
-}
-
-function loginError(message) {
-	return {
-		type: LOGIN_FAILURE,
-		isFetching: false,
-		isAuthenticated: false,
-		message
-	};
-}
 
 export function loginUser(credentials) {
 	return (dispatch) => {
-		dispatch(requestLogin(credentials));
+		dispatch({
+			[CALL_API]: {
+				endpoint: "/api/login",
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(credentials),
+				types: [
+					LOGIN_REQUEST,
+					{
+						type: LOGIN_SUCCESS,
+						payload: (action, state, res) => {
+							return res.json().then((json) => {
+								const token = json.token;
+								const user = jwt.decode(token)._id;
 
-		axios.post("/api/login", credentials)
-			.then((res) => {
-				const token = res.data.token;
-				const decodedToken = jwt.decode(token);
-				localStorage.setItem("authtoken", token);
-				dispatch(receiveLogin(token, decodedToken._id));
-			}).catch((err) => {
-				dispatch(loginError(err.data.message));
-			});
+								localStorage.setItem("authtoken", token);
+								return ({token, user});
+							})
+						}
+					},
+					LOGIN_FAILURE
+				]
+			}
+		});
 	}
 }
 

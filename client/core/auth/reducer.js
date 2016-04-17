@@ -34,11 +34,12 @@ export function authReducer(state = initialState, action) {
 				isAuthenticated: false
 			});
 		case LOGIN_SUCCESS:
+			console.log(action);
 			return Object.assign({}, state, {
 				isFetching: false,
 				isAuthenticated: true,
-				token: action.token,
-				user: action.user
+				token: action.payload.token,
+				user: action.payload.user
 			});
 		case LOGIN_FAILURE:
 			return Object.assign({}, state, {
