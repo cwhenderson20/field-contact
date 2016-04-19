@@ -38,7 +38,7 @@ function getPlugins(env) {
 }
 
 function getEntry(env) {
-	const entry = [];
+	const entry = ["babel-polyfill"];
 
 	if (env === dev) {
 		entry.push("webpack-dev-server/client?http://localhost:8080");

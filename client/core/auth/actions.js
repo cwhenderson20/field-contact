@@ -1,33 +1,49 @@
 import jwt from "jsonwebtoken";
-import { CALL_API } from "redux-api-middleware";
+import { callAPI } from "util/api";
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
+import { TOKEN_KEY } from "./constants";
+
+function requestLogin() {
+	return {
+		type: LOGIN_REQUEST,
+		isFetching: true,
+		isAuthenticated: false
+	};
+}
+
+function receiveLogin(token, user) {
+	return {
+		type: LOGIN_SUCCESS,
+		isFetching: false,
+		isAuthenticated: true,
+		token,
+		user
+	};
+}
+
+function loginError(error) {
+	return {
+		type: LOGIN_FAILURE,
+		isFetching: false,
+		isAuthenticated: false,
+		error
+	};
+}
 
 export function loginUser(credentials) {
 	return (dispatch) => {
-		dispatch({
-			[CALL_API]: {
-				endpoint: "/api/login",
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(credentials),
-				types: [
-					LOGIN_REQUEST,
-					{
-						type: LOGIN_SUCCESS,
-						payload: (action, state, res) => {
-							return res.json().then((json) => {
-								const token = json.token;
-								const user = jwt.decode(token)._id;
+		dispatch(requestLogin());
+		callAPI({
+			url: "/api/login",
+			method: "POST",
+			data: credentials
+		}).then((response) => {
+			const token = response.data.token;
+			const user = jwt.decode(token)._id;
 
-								localStorage.setItem("authtoken", token);
-								return ({token, user});
-							})
-						}
-					},
-					LOGIN_FAILURE
-				]
-			}
-		});
+			localStorage.setItem(TOKEN_KEY, token);
+			dispatch(receiveLogin(token, user));
+		}).catch((error) => dispatch(loginError(error)));
 	}
 }
 
@@ -50,7 +66,7 @@ function receiveLogout() {
 export function logoutUser() {
 	return (dispatch) => {
 		dispatch(requestLogout());
-		localStorage.removeItem("authtoken");
+		localStorage.removeItem(TOKEN_KEY);
 		dispatch(receiveLogout());
 	};
 }

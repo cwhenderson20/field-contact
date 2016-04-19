@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT_REQUEST, LOGOUT_SUCCESS } from "./action-types";
+import { TOKEN_KEY } from "./constants";
 
 function getInitialState() {
 	const initialState = {
@@ -7,7 +8,7 @@ function getInitialState() {
 		isAuthenticated: false
 	};
 
-	const token = localStorage.getItem("authtoken");
+	const token = localStorage.getItem(TOKEN_KEY);
 
 	if (token) {
 		const decodedToken = jwt.decode(token);
@@ -34,18 +35,17 @@ export function authReducer(state = initialState, action) {
 				isAuthenticated: false
 			});
 		case LOGIN_SUCCESS:
-			console.log(action);
 			return Object.assign({}, state, {
 				isFetching: false,
 				isAuthenticated: true,
-				token: action.payload.token,
-				user: action.payload.user
+				token: action.token,
+				user: action.user
 			});
 		case LOGIN_FAILURE:
 			return Object.assign({}, state, {
 				isFetching: false,
 				isAuthenticated: false,
-				errorMessage: action.message
+				errorMessage: action.error
 			});
 		case LOGOUT_REQUEST:
 			return Object.assign({}, state, {

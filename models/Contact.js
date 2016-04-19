@@ -11,22 +11,8 @@ const ContactSchema = new mongoose.Schema({
 	alias: { type: String, trim: true },
 	ssn: { type: String, trim: true },
 	oln: { type: String, trim: true },
-	height: {
-		value: Number,
-		unit: {
-			type: String,
-			"enum": ["in", "cm"],
-			"default": "in"
-		}
-	},
-	weight: {
-		value: Number,
-		unit: {
-			type: String,
-			"enum": ["lbs", "kg"],
-			"default": "lbs"
-		}
-	},
+	height: Number,
+	weight: Number,
 	gender: String,
 	ethnicity: String,
 	identifyingMarks: String,
